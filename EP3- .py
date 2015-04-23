@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 14 11:26:03 2015
+Created on Tue Apr 14 11:25:19 2015
 
-@author: Bruna
+@author: LuizJR
 """
-import matplotlib.pyplot as plt
+
 
 def calculo_usuario(id, pe, se, al, fa):
     # calculo do tmb e calorias 
@@ -51,6 +51,8 @@ def calculo_alim(alim, qtd):
             break
     return(cal_alim, prot_alim, carb_alim, gord_alim)   
 
+
+
 # leitura do arquivo Alimentos
 arq_alimentos=open("alimentos.csv",encoding="latin1", mode="r")
 al=arq_alimentos.readlines()
@@ -86,12 +88,14 @@ for i in dieta:
     while j < 4:
         i.append(temp[j])
         j = j+1
+
 # Calculo da Dieta Diaria
 dieta_dia=[]
 dia=[]
 for i in dieta:
     dia.append(i[0])
 dia.sort()
+
 temp1=0
 while temp1 < len(dia)-1:
     if dia[temp1] == dia[temp1+1]:
@@ -128,19 +132,17 @@ for i in dieta_dia:
 # Escrever em arquivo texto IMC e Delta Caloria
 arq_resultados=open("resultados.txt",encoding="latin1", mode="w")
 arq_resultados.write(str(usuario[0][0]))
-arq_resultados.write("  IMC=")
-arq_resultados.write(str(calc_usu[2]))
-arq_resultados.write("  ( ")
-arq_resultados.write(str(calc_usu[3]))
+arq_resultados.write("  IMC= %.2f" % calc_usu[2])
+arq_resultados.write("  ( %s" % str(calc_usu[3]))
 arq_resultados.write(" ) ")
 for i in dieta_dia:
-    arq_resultados.write("  Dia=")
-    arq_resultados.write(str(i[0]))
-    arq_resultados.write("  Delta_Calorias=")
-    arq_resultados.write(str(i[5]))
+    arq_resultados.write("  Dia= %s" % str(i[0]))
+    arq_resultados.write("  Delta_Calorias= %.2f" % i[5])
 arq_resultados.close()
 
 
+
+ 
 #lista de calorias recomendadas por dia
 cal_rec=[]
 for i in dia:
@@ -176,17 +178,33 @@ for i in range (0, len (dia)):
 
 #plotar gráfico da qt diaria recomendada de cal e a qt consumida de cal, prot, carb e gord, por dia
 
-plt.plot(dias, cal_rec)
-plt.plot(dias, cal_cons)
-plt.axis([1, len(dias), 0, 3000])
+import matplotlib.pyplot as plt
+import datetime as dt
+
+dias1 =[]
+dias1 = [dt.datetime.strptime(d,'%d/%m/%y').date() for d in dia]
+temp = range(len(dias1))
+
+import matplotlib.dates as mdates
+
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%Y'))
+plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+plt.plot(dias1, cal_rec)
+plt.plot(dias1, cal_cons)
+plt.gcf().autofmt_xdate()
+plt.title('Calorias Recomendadas e Cosnumidas por Dia \n')
 plt.ylabel('calorias recomendadas (azul), \n calorias consumidas (verde)')
 plt.xlabel('dia')
 plt.show()
 
-plt.plot(dias, prot_cons)
-plt.plot(dias, carbo_cons)
-plt.plot(dias, gord_cons)
-plt.axis([1, len(dias), 0, 200])
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%Y'))
+plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+plt.plot(dias1, prot_cons)
+plt.plot(dias1, carbo_cons)
+plt.plot(dias1, gord_cons)
+plt.title('Proteinas, Caboidratos e Gorduras Consumidas por Dia \n')
 plt.ylabel('proteinas consumidas (azul), \n  carboidratos consumidos (verde), \n gorduras consumidas (vermelho)')
 plt.xlabel('dia')
 plt.show()
+
+ 
